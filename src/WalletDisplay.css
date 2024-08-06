@@ -1,0 +1,47 @@
+.wallet-display {
+    display: flex;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #1e2d3b;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    height: 50px;
+    justify-content: center;
+  }
+  
+  .balance {
+    display: flex;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-right: 8px;
+    color: white;
+  }
+  
+  .currency-symbol {
+    font-size: 14px;
+    margin-right: 4px;
+  }
+  
+  .amount {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .dropdown-icon {
+    font-size: 12px;
+    margin-left: 6px;
+    color: #888;
+  }
+  
+  .wallet-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }

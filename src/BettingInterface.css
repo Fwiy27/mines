@@ -1,0 +1,12 @@
+/* Betting interface */
+.betting-interface {
+    background-color: #202d3d;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    color: white;
+    flex-grow: 1; /* Allow the element to grow and fill the available height */
+    max-height: 500px; /* Optional: limit the maximum height */
+  }
