@@ -116,7 +116,7 @@ const App: React.FC = () => {
 
   return (
     <div className='root'>
-      <WalletDisplay balance={balance} currency='$'/>
+      <WalletDisplay balance={balance} currency='$' setBalance={setBalance}/>
       <div className="main-content">
         <BettingInterface
           amount={amount}
