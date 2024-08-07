@@ -22,10 +22,11 @@ function nCr(n: number, r: number): number {
 }
 
 const App: React.FC = () => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>(''); 
   const [mines, setMines] = useState<number>(1);
   const [balance, setBalance] = useState<number>(500);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [revealedCount, setRevealedCount] = useState<number>(0);
   const [revealedTiles, setRevealedTiles] = useState<boolean[][]>(
     Array(5).fill(null).map(() => Array(5).fill(false))
   );
@@ -34,31 +35,42 @@ const App: React.FC = () => {
   const [showAllTiles, setShowAllTiles] = useState<boolean>(false);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(Number(e.target.value));
-  };
+    const value = e.target.value;
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+    }
+  }; 
 
   const halveBet = () => {
-    setAmount(prevAmount => Math.max(prevAmount / 2, 0));
+    setAmount(prev => {
+      const num = Number(prev) / 2;
+      return num > 0 ? num.toString() : '0';
+    });
   };
-
+  
   const doubleBet = () => {
-    setAmount(prevAmount => Math.min(prevAmount * 2, balance));
-  };
+    setAmount(prev => {
+      const num = Math.min(Number(prev) * 2, balance);
+      return num.toString();
+    });
+  }; 
 
   const handleMinesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMines(Number(e.target.value));
   };
 
   const play = () => {
-    if (amount > 0 && amount <= balance) {
+    const numAmount = Number(amount);
+    if (numAmount > 0 && numAmount <= balance) {
       setIsPlaying(true);
-      setBalance(prevBalance => prevBalance - amount);
+      setBalance(prevBalance => prevBalance - numAmount);
       setMinePositions(generateMinePositions());
       setRevealedTiles(Array(5).fill(null).map(() => Array(5).fill(false)));
+      setRevealedCount(0);
       setCurrentWinnings(0);
       setShowAllTiles(false);
     }
-  };
+  }; 
 
   const cashout = () => {
     setIsPlaying(false);
@@ -91,13 +103,15 @@ const App: React.FC = () => {
         r.map((cell, j) => (i === row && j === col ? true : cell))
       );
       setRevealedTiles(newRevealedTiles);
+      const newRevealedCount = newRevealedTiles.flat().filter(Boolean).length;
+      setRevealedCount(newRevealedCount);
       setCurrentWinnings(calculateWinnings(newRevealedTiles));
     }
-  };
+  }; 
 
   const calculateWinnings = (revealed: boolean[][]): number => {
     const revealedCount = revealed.flat().filter(Boolean).length;
-    return amount * calculateMultiplier(mines, revealedCount);
+    return Number(amount) * calculateMultiplier(mines, revealedCount);
   }; 
 
   return (
@@ -114,6 +128,7 @@ const App: React.FC = () => {
           play={isPlaying ? cashout : play}
           isPlaying={isPlaying}
           currentWinnings={currentWinnings}
+          revealedCount={revealedCount}
         />
         <div className="grid">
           <Grid 

@@ -2,7 +2,7 @@ import React from 'react';
 import './BettingInterface.css'
 
 interface BettingInterfaceProps {
-  amount: number;
+  amount: string;
   handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   halveBet: () => void;
   doubleBet: () => void;
@@ -11,6 +11,7 @@ interface BettingInterfaceProps {
   play: () => void;
   isPlaying: boolean;
   currentWinnings: number;
+  revealedCount: number;  // Add this line if it's not already there
 }
 
 function calculateMultiplier(mines: number, clicked: number): number {
@@ -30,10 +31,9 @@ function nCr(n: number, r: number): number {
   return numerator / denominator;
 }
 
-function calculateNextProfit(currentWinnings: number, initialBet: number, minesCount: number): number {
-  if (currentWinnings <= 0 || initialBet <= 0) return 0;
-  const revealedTiles = Math.round(Math.log(currentWinnings / initialBet) / Math.log(calculateMultiplier(minesCount, 1)));
-  return initialBet * calculateMultiplier(minesCount, revealedTiles + 1);
+function calculateNextProfit(currentWinnings: number, initialBet: number, minesCount: number, revealedCount: number): number {
+  if (revealedCount >= 25 - minesCount) return currentWinnings;
+  return initialBet * calculateMultiplier(minesCount, revealedCount + 1);
 }
 
 const BettingInterface: React.FC<BettingInterfaceProps> = ({
@@ -46,7 +46,9 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   play,
   isPlaying,
   currentWinnings,
+  revealedCount,  // Add this line
 }) => {
+  // ... rest of the component
   return (
     <div className="betting-interface">
       <div className="mode-toggle">
@@ -54,7 +56,13 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
         <button>Auto</button>
       </div>
       <div className="amount-input">
-        <input type="number" value={amount} onChange={handleAmountChange} disabled={isPlaying} />
+        <input
+          type="text"
+          value={amount}
+          onChange={handleAmountChange}
+          disabled={isPlaying}
+          placeholder="Enter bet amount"
+        />
         <button onClick={halveBet} disabled={isPlaying}>½</button>
         <button onClick={doubleBet} disabled={isPlaying}>2x</button>
       </div>
@@ -68,11 +76,14 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
       </button>
       {isPlaying && (
         <div className="winnings-info">
-          <p>Profit on Next Tile: ${(calculateNextProfit(currentWinnings, amount, mines) - currentWinnings).toFixed(2)}</p>
-          <p>Total Profit: ${(currentWinnings - amount).toFixed(2)}</p>
+          <p>Profit on Next Tile: ${(() => {
+            const nextProfit = calculateNextProfit(currentWinnings, Number(amount) || 0, mines, revealedCount);
+            return (nextProfit - currentWinnings).toFixed(2);
+          })()}</p>
+          <p>Total Profit: ${(currentWinnings - (Number(amount) || 0)).toFixed(2)}</p>
         </div>
       )}
-    </div>
+    </div> 
   );
 };
 
