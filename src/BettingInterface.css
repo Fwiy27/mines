@@ -9,4 +9,10 @@
     color: white;
     flex-grow: 1; /* Allow the element to grow and fill the available height */
     max-height: 500px; /* Optional: limit the maximum height */
-  }
+}
+
+@media only screen and (max-width: 600px) {
+  /* .betting-interface {
+    align-items: center;
+  } */
+}
