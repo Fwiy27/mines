@@ -10,27 +10,7 @@
   color: white;
   flex-grow: 1;
   max-height: 500px;
-}
-
-.mode-toggle {
-  background-color: #2c3e50;
-  border-radius: 25px;
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.mode-toggle button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  background: none;
-  color: white;
-  cursor: pointer;
-}
-
-.mode-toggle button.active {
-  background-color: #3498db;
-  border-radius: 25px;
+  padding-top: 0;
 }
 
 .amount-input {

@@ -3,7 +3,6 @@
 .root {
   align-content: center;
   background-color: #202d3d;
-  /* height: 100vh; */
 }
 
 /* App container */
@@ -15,6 +14,7 @@
   padding: 20px;
   box-sizing: border-box;
 }
+
 .main-content {
   display: flex;
   flex-direction: row;
@@ -22,6 +22,7 @@
   gap: 20px;
   height: 100%;
 }
+
 /* Betting interface */
 .betting-interface {
   background-color: #202d3d;
@@ -29,10 +30,7 @@
   padding: 20px;
   max-width: 300px;
   color: white;
-  /* height: 100%; Adjust to fill the parent's height */
-  /* max-height: 500px; Optional: if you want to limit the height */
 }
-
 
 /* Mode toggle */
 .mode-toggle {
@@ -106,12 +104,12 @@
 }
 
 @media only screen and (max-width: 600px) {
-  /* .root {
-    margin-top: 100px;
-  } */
-
   .main-content {
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
+  }
+
+  .grid {
+    margin-bottom: 20px;
   }
 }
