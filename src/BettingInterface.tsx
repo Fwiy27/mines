@@ -1,4 +1,3 @@
-// BettingInterface.tsx
 import React from 'react';
 import './BettingInterface.css'
 
@@ -12,7 +11,7 @@ interface BettingInterfaceProps {
   play: () => void;
   isPlaying: boolean;
   currentWinnings: number;
-  revealedCount: number;  // Add this line if it's not already there
+  revealedCount: number;
 }
 
 function calculateMultiplier(mines: number, clicked: number): number {
@@ -32,11 +31,6 @@ function nCr(n: number, r: number): number {
   return numerator / denominator;
 }
 
-function calculateNextProfit(currentWinnings: number, initialBet: number, minesCount: number, revealedCount: number): number {
-  if (revealedCount >= 25 - minesCount) return currentWinnings;
-  return initialBet * calculateMultiplier(minesCount, revealedCount + 1);
-}
-
 const BettingInterface: React.FC<BettingInterfaceProps> = ({
   amount,
   handleAmountChange,
@@ -47,15 +41,14 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   play,
   isPlaying,
   currentWinnings,
-  revealedCount,  // Add this line
+  revealedCount,
 }) => {
-  // ... rest of the component
+  const initialBet = Number(amount) || 0;
+  const netGain = currentWinnings - initialBet;
+  const currentMultiplier = calculateMultiplier(mines, revealedCount);
+
   return (
     <div className="betting-interface">
-      <div className="mode-toggle">
-        <button className="active">Manual</button>
-        <button>Auto</button>
-      </div>
       <div className="amount-input">
         <input
           type="text"
@@ -72,18 +65,15 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
           <option key={num} value={num}>{num}</option>
         ))}
       </select>
+      {isPlaying && (
+        <div className="current-game-info">
+          <div className="multiplier">({currentMultiplier.toFixed(2)}x)</div>
+          <div className="net-gain">${netGain.toFixed(2)}</div>
+        </div>
+      )}
       <button className={`play-button ${isPlaying ? 'cashout' : ''}`} onClick={play}>
         {isPlaying ? `Cashout $${currentWinnings.toFixed(2)}` : 'Play'}
       </button>
-      {isPlaying && (
-        <div className="winnings-info">
-          <p>Profit on Next Tile: ${(() => {
-            const nextProfit = calculateNextProfit(currentWinnings, Number(amount) || 0, mines, revealedCount);
-            return (nextProfit - currentWinnings).toFixed(2);
-          })()}</p>
-          <p>Total Profit: ${(currentWinnings - (Number(amount) || 0)).toFixed(2)}</p>
-        </div>
-      )}
     </div> 
   );
 };
