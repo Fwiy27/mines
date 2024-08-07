@@ -6,8 +6,12 @@ import BettingInterface from './BettingInterface';
 import './App.css'
 import Grid from './Grid';
 import WalletDisplay from './WalletDisplay';
+import CashoutPopup from './CashoutPopup';
 
 function calculateMultiplier(mines: number, clicked: number): number {
+  if (clicked == 0) {
+    return 0
+  }
   return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(4));
 }
 
@@ -31,6 +35,7 @@ const App: React.FC = () => {
   const [balance, setBalance] = useState<number>(cookies.balance ? Number(cookies.balance) : 500);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [revealedCount, setRevealedCount] = useState<number>(0);
+  const [showCashoutPopup, setShowCashoutPopup] = useState<boolean>(false);
   const [revealedTiles, setRevealedTiles] = useState<boolean[][]>(
     Array(5).fill(null).map(() => Array(5).fill(false))
   );
@@ -77,14 +82,20 @@ const App: React.FC = () => {
       setRevealedCount(0);
       setCurrentWinnings(0);
       setShowAllTiles(false);
+      closeCashoutPopup();
     }
   }; 
 
   const cashout = () => {
     setIsPlaying(false);
     setBalance(prevBalance => prevBalance + currentWinnings);
-    setCurrentWinnings(0);
+    setShowCashoutPopup(true);
     setShowAllTiles(true);
+  };
+
+  const closeCashoutPopup = () => {
+    setShowCashoutPopup(false);
+    setCurrentWinnings(0);
   };
 
   const generateMinePositions = (): number[] => {
@@ -138,7 +149,7 @@ const App: React.FC = () => {
           currentWinnings={currentWinnings}
           revealedCount={revealedCount}
         />
-        <div className="grid">
+        <div className="grid-container">
           <Grid 
             revealedTiles={revealedTiles}
             minePositions={minePositions}
@@ -146,10 +157,16 @@ const App: React.FC = () => {
             isPlaying={isPlaying}
             showAllTiles={showAllTiles}
           />
+          {showCashoutPopup && (
+            <CashoutPopup
+              multiplier={calculateMultiplier(mines, revealedCount)}
+              totalWin={currentWinnings}
+              onClose={closeCashoutPopup}
+            />
+          )}
         </div>
       </div>
     </div>
   );
-};
-
+}; 
 export default App;

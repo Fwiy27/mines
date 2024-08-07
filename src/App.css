@@ -1,35 +1,54 @@
 /* App.css */
 
 .root {
-  align-content: center;
-  background-color: #202d3d;
-}
-
-/* App container */
-.app-container {
-  background-color: #1a2634;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background-color: #202d3d;
   padding: 20px;
   box-sizing: border-box;
 }
 
-.main-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 20px;
-  height: 100%;
+.wallet-display {
+  align-self: center;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
 }
 
-/* Betting interface */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
 .betting-interface {
-  background-color: #202d3d;
-  border-radius: 15px;
-  padding: 20px;
+  width: 100%;
   max-width: 300px;
-  color: white;
+  margin-bottom: 20px;
+}
+
+.grid-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .main-content {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .betting-interface {
+    margin-bottom: 0;
+  }
 }
 
 /* Mode toggle */
