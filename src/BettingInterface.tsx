@@ -13,6 +13,29 @@ interface BettingInterfaceProps {
   currentWinnings: number;
 }
 
+function calculateMultiplier(mines: number, clicked: number): number {
+  return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(4));
+}
+
+function nCr(n: number, r: number): number {
+  if (r > n) return 0;
+  if (r === 0 || r === n) return 1;
+  r = Math.min(r, n - r);
+  let numerator = 1;
+  let denominator = 1;
+  for (let i = 1; i <= r; i++) {
+    numerator *= (n - i + 1);
+    denominator *= i;
+  }
+  return numerator / denominator;
+}
+
+function calculateNextProfit(currentWinnings: number, initialBet: number, minesCount: number): number {
+  if (currentWinnings <= 0 || initialBet <= 0) return 0;
+  const revealedTiles = Math.round(Math.log(currentWinnings / initialBet) / Math.log(calculateMultiplier(minesCount, 1)));
+  return initialBet * calculateMultiplier(minesCount, revealedTiles + 1);
+}
+
 const BettingInterface: React.FC<BettingInterfaceProps> = ({
   amount,
   handleAmountChange,
@@ -52,12 +75,5 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
     </div>
   );
 };
-
-function calculateNextProfit(currentWinnings: number, initialBet: number, minesCount: number): number {
-  const totalTiles = 25;
-  const revealedTiles = Math.log(currentWinnings / initialBet) / Math.log((totalTiles - minesCount) / totalTiles);
-  const safetyFactor = 0.97;
-  return initialBet * Math.pow((totalTiles - minesCount) / (totalTiles - revealedTiles - 1), revealedTiles + 1) * safetyFactor;
-}
 
 export default BettingInterface;

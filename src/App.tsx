@@ -4,6 +4,23 @@ import './App.css'
 import Grid from './Grid';
 import WalletDisplay from './WalletDisplay';
 
+function calculateMultiplier(mines: number, clicked: number): number {
+  return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(4));
+}
+
+function nCr(n: number, r: number): number {
+  if (r > n) return 0;
+  if (r === 0 || r === n) return 1;
+  r = Math.min(r, n - r);
+  let numerator = 1;
+  let denominator = 1;
+  for (let i = 1; i <= r; i++) {
+    numerator *= (n - i + 1);
+    denominator *= i;
+  }
+  return numerator / denominator;
+}
+
 const App: React.FC = () => {
   const [amount, setAmount] = useState<number>(0);
   const [mines, setMines] = useState<number>(1);
@@ -63,7 +80,6 @@ const App: React.FC = () => {
 
   const handleTileClick = (row: number, col: number) => {
     if (!isPlaying) return;
-
     const index = row * 5 + col;
     if (minePositions.includes(index)) {
       // Game over
@@ -81,10 +97,8 @@ const App: React.FC = () => {
 
   const calculateWinnings = (revealed: boolean[][]): number => {
     const revealedCount = revealed.flat().filter(Boolean).length;
-    const totalTiles = 25;
-    const safetyFactor = 0.97; // Adjust this for house edge
-    return amount * Math.pow((totalTiles - mines) / (totalTiles - revealedCount), revealedCount) * safetyFactor;
-  };
+    return amount * calculateMultiplier(mines, revealedCount);
+  }; 
 
   return (
     <div className='root'>
