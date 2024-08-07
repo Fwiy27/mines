@@ -1,3 +1,5 @@
+// WalletDisplay.tsx
+
 import React from 'react';
 import './WalletDisplay.css';
 

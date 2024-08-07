@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import BettingInterface from './BettingInterface';
 import './App.css'
 import Grid from './Grid';
@@ -22,9 +23,10 @@ function nCr(n: number, r: number): number {
 }
 
 const App: React.FC = () => {
+  const [cookies, setCookie] = useCookies(['balance']);
   const [amount, setAmount] = useState<string>(''); 
   const [mines, setMines] = useState<number>(1);
-  const [balance, setBalance] = useState<number>(500);
+  const [balance, setBalance] = useState<number>(cookies.balance ? Number(cookies.balance) : 500);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [revealedCount, setRevealedCount] = useState<number>(0);
   const [revealedTiles, setRevealedTiles] = useState<boolean[][]>(
@@ -33,6 +35,10 @@ const App: React.FC = () => {
   const [minePositions, setMinePositions] = useState<number[]>([]);
   const [currentWinnings, setCurrentWinnings] = useState<number>(0);
   const [showAllTiles, setShowAllTiles] = useState<boolean>(false);
+
+  useEffect(() => {
+    setCookie('balance', balance.toString(), { path: '/' });
+  }, [balance, setCookie]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

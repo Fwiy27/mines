@@ -1,3 +1,4 @@
+// BettingInterface.tsx
 import React from 'react';
 import './BettingInterface.css'
 
