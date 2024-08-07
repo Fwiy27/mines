@@ -1,29 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Grid.css';
 
-const Grid: React.FC = () => {
-  const [clickedCells, setClickedCells] = useState<boolean[][]>(
-    Array(5).fill(null).map(() => Array(5).fill(false))
-  );
+interface GridProps {
+  revealedTiles: boolean[][];
+  minePositions: number[];
+  handleTileClick: (row: number, col: number) => void;
+  isPlaying: boolean;
+  showAllTiles: boolean;
+}
 
-  const handleCellClick = (row: number, col: number) => {
-    const newClickedCells = clickedCells.map((r, i) =>
-      r.map((cell, j) => (i === row && j === col ? !cell : cell))
-    );
-    setClickedCells(newClickedCells);
+const Grid: React.FC<GridProps> = ({ revealedTiles, minePositions, handleTileClick, isPlaying, showAllTiles }) => {
+  const isMine = (row: number, col: number) => {
+    const index = row * 5 + col;
+    return minePositions.includes(index);
   };
 
   return (
     <div className="grid">
-      {clickedCells.map((row, i) => (
+      {revealedTiles.map((row, i) => (
         <div key={i} className="row">
-          {row.map((clicked, j) => (
-            <div
-              key={j}
-              className={`cell ${clicked ? 'clicked' : ''}`}
-              onClick={() => handleCellClick(i, j)}
-            />
-          ))}
+          {row.map((revealed, j) => {
+            const mine = isMine(i, j);
+            let cellClass = 'cell';
+            
+            if (revealed) {
+              cellClass += ' revealed clicked-gem';
+            } else if (showAllTiles) {
+              cellClass += mine ? ' revealed mine' : ' revealed unclicked-gem';
+            }
+            
+            if (isPlaying) {
+              cellClass += ' clickable';
+            }
+            
+            return (
+              <div
+                key={j}
+                className={cellClass}
+                onClick={() => isPlaying && handleTileClick(i, j)}
+              />
+            );
+          })}
         </div>
       ))}
     </div>
