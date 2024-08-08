@@ -77,7 +77,7 @@
 .amount-input {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .amount-input input {
@@ -126,6 +126,10 @@
   .main-content {
     flex-direction: column-reverse;
     align-items: center;
+  }
+
+  .betting-interface {
+    margin-top: 15px;
   }
 
   .grid {

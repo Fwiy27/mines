@@ -1,5 +1,3 @@
-// BettingInterface.tsx
-
 import React from 'react';
 import './BettingInterface.css'
 
@@ -54,22 +52,29 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
 
   return (
     <div className="betting-interface">
-      <div className="amount-input">
-        <input
-          type="text"
-          value={amount}
-          onChange={handleAmountChange}
-          disabled={isPlaying}
-          placeholder="Enter bet amount"
-        />
-        <button onClick={halveBet} disabled={isPlaying}>½</button>
-        <button onClick={doubleBet} disabled={isPlaying}>2x</button>
+      <div className="input-group">
+        <label htmlFor="amount-input">Amount</label>
+        <div className="amount-input">
+          <input
+            id="amount-input"
+            type="text"
+            value={amount}
+            onChange={handleAmountChange}
+            disabled={isPlaying}
+            placeholder="Enter bet amount"
+          />
+          <button onClick={halveBet} disabled={isPlaying}>½</button>
+          <button onClick={doubleBet} disabled={isPlaying}>2x</button>
+        </div>
       </div>
-      <select className="mines-select" value={mines} onChange={handleMinesChange} disabled={isPlaying}>
-        {Array.from({length: 24}, (_, i) => i + 1).map(num => (
-          <option key={num} value={num}>{num}</option>
-        ))}
-      </select>
+      <div className="input-group">
+        <label htmlFor="mines-select">Mines</label>
+        <select id="mines-select" className="mines-select" value={mines} onChange={handleMinesChange} disabled={isPlaying}>
+          {Array.from({length: 24}, (_, i) => i + 1).map(num => (
+            <option key={num} value={num}>{num}</option>
+          ))}
+        </select>
+      </div>
       {isPlaying && (
         <div className="current-game-info">
           <div className="multiplier">({currentMultiplier.toFixed(2)}x)</div>
