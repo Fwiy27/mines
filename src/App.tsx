@@ -12,7 +12,7 @@ function calculateMultiplier(mines: number, clicked: number): number {
   if (clicked == 0) {
     return 0
   }
-  return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(4));
+  return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(2));
 }
 
 function nCr(n: number, r: number): number {
@@ -47,24 +47,23 @@ const App: React.FC = () => {
     setCookie('balance', balance.toString(), { path: '/' });
   }, [balance, setCookie]);
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleAmountChange = (value: string) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
-  }; 
+  };
 
   const halveBet = () => {
     setAmount(prev => {
       const num = Number(prev) / 2;
-      return num > 0 ? num.toString() : '0';
+      return (num > 0 ? num : 0).toFixed(2);
     });
   };
   
   const doubleBet = () => {
     setAmount(prev => {
       const num = Math.min(Number(prev) * 2, balance);
-      return num.toString();
+      return num.toFixed(2);
     });
   }; 
 
@@ -73,10 +72,10 @@ const App: React.FC = () => {
   };
 
   const play = () => {
-    const numAmount = Number(amount);
+    const numAmount = Number(parseFloat(amount).toFixed(2));
     if (numAmount > 0 && numAmount <= balance) {
       setIsPlaying(true);
-      setBalance(prevBalance => prevBalance - numAmount);
+      setBalance(prevBalance => Number((prevBalance - numAmount).toFixed(2)));
       setMinePositions(generateMinePositions());
       setRevealedTiles(Array(5).fill(null).map(() => Array(5).fill(false)));
       setRevealedCount(0);
@@ -88,7 +87,7 @@ const App: React.FC = () => {
 
   const cashout = () => {
     setIsPlaying(false);
-    setBalance(prevBalance => prevBalance + currentWinnings);
+    setBalance(prevBalance => Number((prevBalance + currentWinnings).toFixed(2)));
     setShowCashoutPopup(true);
     setShowAllTiles(true);
   };
@@ -124,14 +123,16 @@ const App: React.FC = () => {
       setRevealedTiles(newRevealedTiles);
       const newRevealedCount = newRevealedTiles.flat().filter(Boolean).length;
       setRevealedCount(newRevealedCount);
-      setCurrentWinnings(calculateWinnings(newRevealedTiles));
+      setCurrentWinnings(Number(calculateWinnings(newRevealedTiles).toFixed(2)));
     }
   }; 
 
   const calculateWinnings = (revealed: boolean[][]): number => {
     const revealedCount = revealed.flat().filter(Boolean).length;
-    return Number(amount) * calculateMultiplier(mines, revealedCount);
-  }; 
+    const multiplier = calculateMultiplier(mines, revealedCount);
+    const winnings = Number(amount) * multiplier;
+    return Number(winnings.toFixed(2));
+  };  
 
   return (
     <div className='root'>

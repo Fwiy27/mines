@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './BettingInterface.css'
 
 interface BettingInterfaceProps {
   amount: string;
-  handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAmountChange: (amount: string) => void;
   halveBet: () => void;
   doubleBet: () => void;
   mines: number;
@@ -46,9 +46,32 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   currentWinnings,
   revealedCount,
 }) => {
+  const [localAmount, setLocalAmount] = useState(amount);
+
   const initialBet = Number(amount) || 0;
   const netGain = currentWinnings - initialBet;
   const currentMultiplier = calculateMultiplier(mines, revealedCount);
+
+  const handleLocalAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalAmount(e.target.value);
+  };
+
+  const handleAmountBlur = () => {
+    // Remove any non-numeric characters except for the decimal point
+    const cleanedAmount = localAmount.replace(/[^\d.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = cleanedAmount.split('.');
+    let formattedAmount = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
+    
+    // Limit to two decimal places
+    const match = formattedAmount.match(/^-?\d+(?:\.\d{0,2})?/);
+    formattedAmount = match ? match[0] : '';
+
+    // Update both local state and parent component
+    setLocalAmount(formattedAmount);
+    handleAmountChange(formattedAmount);
+  };
 
   return (
     <div className="betting-interface">
@@ -58,8 +81,9 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
           <input
             id="amount-input"
             type="text"
-            value={amount}
-            onChange={handleAmountChange}
+            value={localAmount}
+            onChange={handleLocalAmountChange}
+            onBlur={handleAmountBlur}
             disabled={isPlaying}
             placeholder="Enter bet amount"
           />
