@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BettingInterface.css'
 
 interface BettingInterfaceProps {
   amount: string;
   handleAmountChange: (amount: string) => void;
-  halveBet: () => void;
-  doubleBet: () => void;
   mines: number;
   handleMinesChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   play: () => void;
@@ -37,8 +35,6 @@ function nCr(n: number, r: number): number {
 const BettingInterface: React.FC<BettingInterfaceProps> = ({
   amount,
   handleAmountChange,
-  halveBet,
-  doubleBet,
   mines,
   handleMinesChange,
   play,
@@ -47,6 +43,10 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   revealedCount,
 }) => {
   const [localAmount, setLocalAmount] = useState(amount);
+
+  useEffect(() => {
+    setLocalAmount(amount);
+  }, [amount]);
 
   const initialBet = Number(amount) || 0;
   const netGain = currentWinnings - initialBet;
@@ -57,20 +57,34 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   };
 
   const handleAmountBlur = () => {
+    const formattedAmount = formatAmount(localAmount);
+    setLocalAmount(formattedAmount);
+    handleAmountChange(formattedAmount);
+  };
+
+  const formatAmount = (value: string): string => {
     // Remove any non-numeric characters except for the decimal point
-    const cleanedAmount = localAmount.replace(/[^\d.]/g, '');
+    const cleanedAmount = value.replace(/[^\d.]/g, '');
     
     // Ensure only one decimal point
     const parts = cleanedAmount.split('.');
-    let formattedAmount = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
+    const formattedAmount = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
     
     // Limit to two decimal places
     const match = formattedAmount.match(/^-?\d+(?:\.\d{0,2})?/);
-    formattedAmount = match ? match[0] : '';
+    return match ? match[0] : '';
+  };
 
-    // Update both local state and parent component
-    setLocalAmount(formattedAmount);
-    handleAmountChange(formattedAmount);
+  const handleLocalHalveBet = () => {
+    const newAmount = (Number(localAmount) / 2).toFixed(2);
+    setLocalAmount(newAmount);
+    handleAmountChange(newAmount);
+  };
+
+  const handleLocalDoubleBet = () => {
+    const newAmount = (Number(localAmount) * 2).toFixed(2);
+    setLocalAmount(newAmount);
+    handleAmountChange(newAmount);
   };
 
   return (
@@ -87,8 +101,8 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
             disabled={isPlaying}
             placeholder="Enter bet amount"
           />
-          <button onClick={halveBet} disabled={isPlaying}>½</button>
-          <button onClick={doubleBet} disabled={isPlaying}>2x</button>
+          <button onClick={handleLocalHalveBet} disabled={isPlaying}>½</button>
+          <button onClick={handleLocalDoubleBet} disabled={isPlaying}>2x</button>
         </div>
       </div>
       <div className="input-group">

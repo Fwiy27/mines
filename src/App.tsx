@@ -53,20 +53,6 @@ const App: React.FC = () => {
     }
   };
 
-  const halveBet = () => {
-    setAmount(prev => {
-      const num = Number(prev) / 2;
-      return (num > 0 ? num : 0).toFixed(2);
-    });
-  };
-  
-  const doubleBet = () => {
-    setAmount(prev => {
-      const num = Math.min(Number(prev) * 2, balance);
-      return num.toFixed(2);
-    });
-  }; 
-
   const handleMinesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setMines(Number(e.target.value));
   };
@@ -141,8 +127,6 @@ const App: React.FC = () => {
         <BettingInterface
           amount={amount}
           handleAmountChange={handleAmountChange}
-          halveBet={halveBet}
-          doubleBet={doubleBet}
           mines={mines}
           handleMinesChange={handleMinesChange}
           play={isPlaying ? cashout : play}
