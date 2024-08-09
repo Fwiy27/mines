@@ -37,6 +37,7 @@ const App: React.FC = () => {
   );
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [revealedCount, setRevealedCount] = useState<number>(0);
+  const [winningMultiplier, setWinningMultiplier] = useState<number>(0);
   const [showCashoutPopup, setShowCashoutPopup] = useState<boolean>(false);
   const [revealedTiles, setRevealedTiles] = useState<boolean[][]>(
     Array(5)
@@ -87,14 +88,16 @@ const App: React.FC = () => {
 
   const cashout = useCallback(() => {
     if (revealedCount > 0) {
+      const currentMultiplier = calculateMultiplier(mines, revealedCount);
       setIsPlaying(false);
       setBalance((prevBalance) =>
         Number((prevBalance + currentWinnings).toFixed(2))
       );
+      setWinningMultiplier(currentMultiplier);
       setShowCashoutPopup(true);
       setShowAllTiles(true);
     }
-  }, [currentWinnings, revealedCount]);
+  }, [currentWinnings, revealedCount, mines]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -187,13 +190,12 @@ const App: React.FC = () => {
             isPlaying={isPlaying}
             showAllTiles={showAllTiles}
           />
-          {showCashoutPopup && (
-            <CashoutPopup
-              multiplier={calculateMultiplier(mines, revealedCount)}
-              totalWin={currentWinnings}
-              onClose={closeCashoutPopup}
-            />
-          )}
+          <CashoutPopup
+            currentMultiplier={winningMultiplier}
+            totalWin={currentWinnings}
+            onClose={closeCashoutPopup}
+            isVisible={showCashoutPopup}
+          />
         </div>
       </div>
     </div>
