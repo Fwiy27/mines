@@ -138,9 +138,15 @@ const App: React.FC = () => {
       setRevealedTiles(newRevealedTiles);
       const newRevealedCount = newRevealedTiles.flat().filter(Boolean).length;
       setRevealedCount(newRevealedCount);
-      setCurrentWinnings(
-        Number(calculateWinnings(newRevealedTiles).toFixed(2))
+      const newWinnings = Number(
+        calculateWinnings(newRevealedTiles).toFixed(2)
       );
+      setCurrentWinnings(newWinnings);
+
+      // Check if all safe tiles have been revealed
+      if (newRevealedCount === 25 - mines) {
+        cashout();
+      }
     }
   };
 
