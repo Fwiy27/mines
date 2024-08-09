@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './BettingInterface.css'
+import React, { useState, useEffect } from "react";
+import "./BettingInterface.css";
 
 interface BettingInterfaceProps {
   amount: string;
@@ -10,13 +10,16 @@ interface BettingInterfaceProps {
   isPlaying: boolean;
   currentWinnings: number;
   revealedCount: number;
+  canCashout: boolean;
 }
 
 function calculateMultiplier(mines: number, clicked: number): number {
   if (clicked == 0) {
-    return 0
+    return 0;
   }
-  return Number((0.99 * nCr(25, clicked) / nCr(25 - mines, clicked)).toFixed(4));
+  return Number(
+    ((0.99 * nCr(25, clicked)) / nCr(25 - mines, clicked)).toFixed(4)
+  );
 }
 
 function nCr(n: number, r: number): number {
@@ -26,7 +29,7 @@ function nCr(n: number, r: number): number {
   let numerator = 1;
   let denominator = 1;
   for (let i = 1; i <= r; i++) {
-    numerator *= (n - i + 1);
+    numerator *= n - i + 1;
     denominator *= i;
   }
   return numerator / denominator;
@@ -41,6 +44,7 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   isPlaying,
   currentWinnings,
   revealedCount,
+  canCashout,
 }) => {
   const [localAmount, setLocalAmount] = useState(amount);
 
@@ -63,16 +67,12 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
   };
 
   const formatAmount = (value: string): string => {
-    // Remove any non-numeric characters except for the decimal point
-    const cleanedAmount = value.replace(/[^\d.]/g, '');
-    
-    // Ensure only one decimal point
-    const parts = cleanedAmount.split('.');
-    const formattedAmount = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
-    
-    // Limit to two decimal places
+    const cleanedAmount = value.replace(/[^\d.]/g, "");
+    const parts = cleanedAmount.split(".");
+    const formattedAmount =
+      parts[0] + (parts.length > 1 ? "." + parts.slice(1).join("") : "");
     const match = formattedAmount.match(/^-?\d+(?:\.\d{0,2})?/);
-    return match ? match[0] : '';
+    return match ? match[0] : "";
   };
 
   const handleLocalHalveBet = () => {
@@ -101,15 +101,27 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
             disabled={isPlaying}
             placeholder="Enter bet amount"
           />
-          <button onClick={handleLocalHalveBet} disabled={isPlaying}>½</button>
-          <button onClick={handleLocalDoubleBet} disabled={isPlaying}>2x</button>
+          <button onClick={handleLocalHalveBet} disabled={isPlaying}>
+            ½
+          </button>
+          <button onClick={handleLocalDoubleBet} disabled={isPlaying}>
+            2x
+          </button>
         </div>
       </div>
       <div className="input-group">
         <label htmlFor="mines-select">Mines</label>
-        <select id="mines-select" className="mines-select" value={mines} onChange={handleMinesChange} disabled={isPlaying}>
-          {Array.from({length: 24}, (_, i) => i + 1).map(num => (
-            <option key={num} value={num}>{num}</option>
+        <select
+          id="mines-select"
+          className="mines-select"
+          value={mines}
+          onChange={handleMinesChange}
+          disabled={isPlaying}
+        >
+          {Array.from({ length: 24 }, (_, i) => i + 1).map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
           ))}
         </select>
       </div>
@@ -119,10 +131,16 @@ const BettingInterface: React.FC<BettingInterfaceProps> = ({
           <div className="net-gain">${netGain.toFixed(2)}</div>
         </div>
       )}
-      <button className={`play-button ${isPlaying ? 'cashout' : ''}`} onClick={play}>
-        {isPlaying ? `Cashout $${currentWinnings.toFixed(2)}` : 'Play'}
+      <button
+        className={`play-button ${isPlaying ? "cashout" : ""} ${
+          isPlaying && !canCashout ? "disabled" : ""
+        }`}
+        onClick={play}
+        disabled={isPlaying && !canCashout}
+      >
+        {isPlaying ? `Cashout $${currentWinnings.toFixed(2)}` : "Play"}
       </button>
-    </div> 
+    </div>
   );
 };
 

@@ -1,5 +1,4 @@
 /* BettingInterface.css */
-
 .betting-interface {
   background-color: #202d3d;
   border-radius: 15px;
@@ -68,7 +67,7 @@
 }
 
 .play-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 15px;
@@ -77,10 +76,29 @@
   font-size: 18px;
   cursor: pointer;
   margin-bottom: 15px;
+  transition: background-color 0.3s;
+}
+
+.play-button:hover {
+  background-color: #45a049;
 }
 
 .play-button.cashout {
   background-color: #e74c3c;
+}
+
+.play-button.cashout:hover {
+  background-color: #c0392b;
+}
+
+.play-button.disabled {
+  background-color: #7f8c8d;
+  color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.play-button.disabled:hover {
+  background-color: #7f8c8d;
 }
 
 .winnings-info {

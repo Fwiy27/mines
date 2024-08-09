@@ -86,20 +86,24 @@ const App: React.FC = () => {
   }, [amount, balance, generateMinePositions, closeCashoutPopup]);
 
   const cashout = useCallback(() => {
-    setIsPlaying(false);
-    setBalance((prevBalance) =>
-      Number((prevBalance + currentWinnings).toFixed(2))
-    );
-    setShowCashoutPopup(true);
-    setShowAllTiles(true);
-  }, [currentWinnings]);
+    if (revealedCount > 0) {
+      setIsPlaying(false);
+      setBalance((prevBalance) =>
+        Number((prevBalance + currentWinnings).toFixed(2))
+      );
+      setShowCashoutPopup(true);
+      setShowAllTiles(true);
+    }
+  }, [currentWinnings, revealedCount]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         event.preventDefault();
         if (isPlaying) {
-          cashout();
+          if (revealedCount > 0) {
+            cashout();
+          }
         } else {
           play();
         }
@@ -111,7 +115,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isPlaying, play, cashout]);
+  }, [isPlaying, play, cashout, revealedCount]);
 
   const handleAmountChange = (value: string) => {
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
@@ -173,6 +177,7 @@ const App: React.FC = () => {
           isPlaying={isPlaying}
           currentWinnings={currentWinnings}
           revealedCount={revealedCount}
+          canCashout={revealedCount > 0}
         />
         <div className="grid-container">
           <Grid
