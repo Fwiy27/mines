@@ -10,9 +10,7 @@ function calculateMultiplier(mines: number, clicked: number): number {
   if (clicked == 0) {
     return 0;
   }
-  return Number(
-    ((0.99 * nCr(25, clicked)) / nCr(25 - mines, clicked)).toFixed(2)
-  );
+  return Number((0.99 * nCr(25, clicked)) / nCr(25 - mines, clicked));
 }
 
 function nCr(n: number, r: number): number {
