@@ -1,3 +1,5 @@
+// App.tsx
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useCookies } from "react-cookie";
 import BettingInterface from "./BettingInterface";
